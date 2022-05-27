@@ -1,12 +1,13 @@
-#klasa Field przechowująca nazwę objektu oraz jego nazwę
-from const import *
+# klasa Field przechowująca nazwę objektu oraz jego nazwę
+from field_types import *
+
 
 class Field():
-    def __init__(self,name: str, x: int, y: int):
-        self.__name=name
-        self.__fieldType=NONE
-        self.__x=x
-        self.__y=y
+    def __init__(self, name: str, x: int, y: int):
+        self.__name = name
+        self.__fieldType = FieldTypes.NONE
+        self.__x = x
+        self.__y = y
 
     @property
     def x(self):
@@ -38,9 +39,9 @@ class Field():
 
     @fieldType.setter
     def fieldType(self, newType):
-        if (newType != NONE
-                and newType != PLAYER_1_STONE
-                and newType != PLAYER_2_STONE):
+        if (newType != FieldTypes.NONE
+                and newType != FieldTypes.PLAYER_1_STONE
+                and newType != FieldTypes.PLAYER_2_STONE):
             raise ValueError
 
         self.__fieldType = newType
