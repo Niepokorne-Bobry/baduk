@@ -14,7 +14,7 @@ class Board:
         for i in range(self.__size):
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
-                tempRow.append(Field(name, 90 + (j * 90), 90 + (i * 90)))
+                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH)))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
