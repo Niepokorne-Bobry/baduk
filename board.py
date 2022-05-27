@@ -1,12 +1,6 @@
-size = 9  # liczba linii 9 pionowo 9 poziomo
-SIZE = (
-                   size * 90) + 90  # zmienna do rozmiaru boku czyli dlugosci kwadtatów wynaczonych przez linie gdy mamy np 3 linie to dziela one bok na 4 czesci wiec 9 linii to 10 kwadratów
-line_color = '#D4AF37'  # kolor linii ciemne złoto
-LINE_WIDTH = 16  # szerokosc linii
-
 from field import Field
+from constants import line_color, LINE_WIDTH, LINE_LENGTH
 import pygame
-from main import screen
 
 
 class Board:
@@ -28,13 +22,13 @@ class Board:
     # funkcja do rysowania linii
     tempCoordinates = []
 
-    def draw_lines(self):
+    def draw_lines(self, screen, SIZE):
         for i in range(self.__size):
-            x = i * 90
+            x = i * LINE_LENGTH
             # poziome linie
-            pygame.draw.line(screen, line_color, [0, 90 + x], [SIZE, 90 + x], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [0, LINE_LENGTH + x], [SIZE, LINE_LENGTH + x], LINE_WIDTH)
             # pionowe linie
-            pygame.draw.line(screen, line_color, [90 + x, 0], [90 + x, SIZE], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [LINE_LENGTH + x, 0], [LINE_LENGTH + x, SIZE], LINE_WIDTH)
 
     @property
     def size(self):
