@@ -9,12 +9,12 @@ class Board:
             raise ValueError("incorrect size of the board")
         self.__size = size
         zmienna = 1
-        self.__fields: list[list[Field]] = []
+        self.__fields = []
         tempRow = []
         for i in range(self.__size):
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
-                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH), j, i, self))
+                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH)))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
@@ -37,3 +37,16 @@ class Board:
     @property
     def fields(self):
         return self.__fields
+    #rysowanie kamienia o okreslonym kolorze (color) na wspolrzednych xi y
+    def drawStone(self,field,color,x,y):
+        self.__width=30
+        self.__x=x
+        self.__y=y
+        pygame.draw.circle(field, color, [x, y], self.__width)
+    #"----#--------" rysowanie kolka bez wypelnienia
+    def rightclickdraw(self,field,color,x,y):
+        self.__width=30
+        self.__circlewidth=5
+        self.__x = x
+        self.__y = y
+        pygame.draw.circle(field, color, [x, y], self.__width,self.__circlewidth)
