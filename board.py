@@ -9,12 +9,12 @@ class Board:
             raise ValueError("incorrect size of the board")
         self.__size = size
         zmienna = 1
-        self.__fields = []
+        self.__fields: list[list[Field]] = []
         tempRow = []
         for i in range(self.__size):
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
-                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH)))
+                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH), j, i, self))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
