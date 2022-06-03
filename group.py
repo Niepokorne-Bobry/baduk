@@ -26,7 +26,6 @@ class Group:
         return self.__groupType
 
 
-    # nie miałem innego pomysłu, wiem że to masakra
     def addFieldsToGroup(self, field: Field):
         if field.fieldType == self.__groupType and field.wasChecked is False:
             self.fields.append(field)

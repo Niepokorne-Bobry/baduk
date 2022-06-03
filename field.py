@@ -46,7 +46,6 @@ class Field:
         except:
             raise MemoryError("Can't get lower neighbour")
 
-    # paskudny ten kod ech...
     def calculateFieldLiberties(self):
         libs = 0
         try:
