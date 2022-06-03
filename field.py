@@ -1,29 +1,107 @@
 # klasa Field przechowująca nazwę objektu oraz jego nazwę
-from field_types import *
+from enums.field_types import *
 
 
-class Field():
-    def __init__(self, name: str, x: int, y: int):
+class Field:
+    def __init__(self, name: str, coordX: int, coordY: int, boardX: int, boardY: int, board):
         self.__name = name
         self.__fieldType = FieldTypes.NONE
-        self.__x = x
-        self.__y = y
+        self.__coordX = coordX
+        self.__coordY = coordY
+        self.__boardX = boardX
+        self.__boardY = boardY
+        self.__liberties = 0
+        self.__wasChecked = False
+        self.__board = board
 
     @property
-    def x(self):
-        return self.__x
+    def wasChecked(self):
+        return self.__wasChecked
 
-    @x.setter
-    def x(self, newX: int):
-        self.__x = newX
+    @wasChecked.setter
+    def wasChecked(self, newVal: bool):
+        self.__wasChecked = newVal
+
+    def getLeftNeighbour(self):
+        try:
+            return self.__board.fields[self.__boardY][self.__boardX - 1]
+        except:
+            raise MemoryError("Can't get left neighbour")
+
+    def getRightNeighbour(self):
+        try:
+            return self.__board.fields[self.__boardY][self.__boardX + 1]
+        except:
+            raise MemoryError("Can't get right neighbour")
+
+    def getUpperNeighbour(self):
+        try:
+            return self.__board.fields[self.__boardY - 1][self.__boardX]
+        except:
+            raise MemoryError("Can't get upper neighbour")
+
+    def getLowerNeighbour(self):
+        try:
+            return self.__board.fields[self.__boardY + 1][self.__boardX]
+        except:
+            raise MemoryError("Can't get lower neighbour")
+
+    # paskudny ten kod ech...
+    def calculateFieldLiberties(self):
+        libs = 0
+        try:
+            if self.getLowerNeighbour().fieldType == FieldTypes.NONE:
+                libs += 1
+        except:
+            pass
+        try:
+            if self.getLeftNeighbour().fieldType == FieldTypes.NONE:
+                libs += 1
+        except:
+            pass
+        try:
+            if self.getUpperNeighbour().fieldType == FieldTypes.NONE:
+                libs += 1
+        except:
+            pass
+        try:
+            if self.getRightNeighbour().fieldType == FieldTypes.NONE:
+                libs += 1
+        except:
+            pass
+        return libs
 
     @property
-    def y(self):
-        return self.__y
+    def boardX(self):
+        return self.__boardX
 
-    @y.setter
-    def y(self, newY: int):
-        self.__y = newY
+    @boardX.setter
+    def boardX(self, newBoardX):
+        self.__boardX = newBoardX
+
+    @property
+    def boardY(self):
+        return self.__boardY
+
+    @boardY.setter
+    def boardY(self, newBoardY):
+        self.__boardY = newBoardY
+
+    @property
+    def coordX(self):
+        return self.__coordX
+
+    @coordX.setter
+    def coordX(self, newCoordX: int):
+        self.__coordX = newCoordX
+
+    @property
+    def coordY(self):
+        return self.__coordY
+
+    @coordY.setter
+    def coordY(self, newCoordY: int):
+        self.__coordY = newCoordY
 
     @property
     def name(self):
