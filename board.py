@@ -1,5 +1,5 @@
 from field import Field
-from constants import line_color, LINE_WIDTH, LINE_LENGTH
+from constants import line_color, LINE_WIDTH, LINE_LENGTH, CIRCLE_WIDTH, CIRCLE_RADIUS
 import pygame
 
 
@@ -14,7 +14,8 @@ class Board:
         for i in range(self.__size):
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
-                tempRow.append(Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH)))
+                tempRow.append(
+                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH), i, j, self))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
@@ -37,16 +38,11 @@ class Board:
     @property
     def fields(self):
         return self.__fields
-    #rysowanie kamienia o okreslonym kolorze (color) na wspolrzednych xi y
-    def drawStone(self,field,color,x,y):
-        self.__width=30
-        self.__x=x
-        self.__y=y
-        pygame.draw.circle(field, color, [x, y], self.__width)
-    #"----#--------" rysowanie kolka bez wypelnienia
-    def rightclickdraw(self,field,color,x,y):
-        self.__width=30
-        self.__circlewidth=5
-        self.__x = x
-        self.__y = y
-        pygame.draw.circle(field, color, [x, y], self.__width,self.__circlewidth)
+
+    # rysowanie kamienia o okreslonym kolorze (color) na wspolrzednych xi y
+    def drawStone(self, field, color, x, y):
+        pygame.draw.circle(field, color, [x, y], CIRCLE_RADIUS)
+
+    # "----#--------" rysowanie kolka bez wypelnienia
+    def rightclickdraw(self, field, color, x, y):
+        pygame.draw.circle(field, color, [x, y], CIRCLE_RADIUS, CIRCLE_WIDTH)
