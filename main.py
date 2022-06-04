@@ -19,12 +19,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = pygame.mouse.get_pos()
             if event.button == 1:
                 #lewy przycisk
-                game.board.drawStone(screen, PLAYER_ONE_COLOR, 30, 30)
+                game.board.drawStone(screen, PLAYER_ONE_COLOR, x, y)
             elif event.button == 3:
                 #prawy przycisk
-                game.board.rightclickdraw(screen, PLAYER_ONE_COLOR, 60, 60)
+                game.board.rightclickdraw(screen, PLAYER_ONE_COLOR, x, y)
             pygame.display.flip()
             """
             elif event.button == 2:
