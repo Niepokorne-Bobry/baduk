@@ -1,6 +1,6 @@
 import pygame
 from game_class import Game
-from constants import size, SIZE, player_one_color
+from constants import size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
 # Obrazy
 bg_img = pygame.image.load("smoczek_tlo.png")
 bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
@@ -21,10 +21,10 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 #lewy przycisk
-                game.board.drawStone(screen, player_one_color, 30, 30)
+                game.board.drawStone(screen, PLAYER_ONE_COLOR, 30, 30)
             elif event.button == 3:
                 #prawy przycisk
-                game.board.rightclickdraw(screen, player_one_color, 60, 60)
+                game.board.rightclickdraw(screen, PLAYER_ONE_COLOR, 60, 60)
             pygame.display.flip()
             """
             elif event.button == 2:
