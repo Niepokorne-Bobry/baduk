@@ -1,9 +1,9 @@
 from enums.field_types import FieldTypes
 from group import Group
-from main import game
 
 class Player:
-    def __init__(self, fieldType: FieldTypes):
+    def __init__(self, fieldType: FieldTypes,game):
+        self.__game = game
         self.__score = 0
         self.__fieldType = fieldType
         self.__groups: list[Group] = []
@@ -14,12 +14,12 @@ class Player:
 
     def createGroups(self):
         newGroup: Group
-        for i in range(game.board.size):
-            for j in range(game.board.size):
-                if game.board.fields[i][j].wasChecked:
+        for i in range(self.__game.board.size):
+            for j in range(self.__game.board.size):
+                if self.__game.board.fields[i][j].wasChecked:
                     continue
                 newGroup = Group(self.fieldType)
-                newGroup.addFieldsToGroup(game.board.fields[i][j])
+                newGroup.addFieldsToGroup(self.__game.board.fields[i][j])
                 self.groups.append(newGroup)
 
     def updateGroups(self):
@@ -42,5 +42,5 @@ class Player:
     def score(self):
         return self.__score
 
-    def makeMove(self):
+    def makeMove(self,x,y):
         return

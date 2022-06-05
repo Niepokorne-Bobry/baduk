@@ -22,6 +22,7 @@ while running:
             x, y = pygame.mouse.get_pos()
             if event.button == 1:
                 #lewy przycisk
+                game.player1.makeMove(x,y)
                 game.board.drawStone(screen, PLAYER_ONE_COLOR, x, y)
             elif event.button == 3:
                 #prawy przycisk
