@@ -1,10 +1,12 @@
 from field import *
 from enums.move_types import *
 from board import Board
-
+from player import Player
 
 class Game:
     def __init__(self, size: int):
+        self.player1 = Player(FieldTypes.PLAYER_1_STONE,self)
+        self.player2 = Player(FieldTypes.PLAYER_2_STONE,self)
         self.__board: Board = Board(size)
 
     @property
