@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from enums.field_types import FieldTypes
 from group import Group
 
@@ -43,4 +44,9 @@ class Player:
         return self.__score
 
     def makeMove(self,x,y):
-        return
+        for i in range(self.__game.board.size):
+            for j in range(self.__game.board.size):
+                if((abs(self.__game.board.fields[i][j].coordX - x) < 10) and
+                abs(self.__game.board.fields[i][j].coordY - y) < 10):
+                    return self.__game.board.fields[i][j].coordX, self.__game.board.fields[i][j].coordY
+        return -1,-1
