@@ -14,9 +14,10 @@ font = pygame.font.SysFont(None, 20)
 
 #play music
 mixer.init()
-mixer.music.load("mao-zedong-propaganda-music-red-sun-in-the-sky.mp3")
-mixer.music.set_volume(0.7)
-mixer.music.play()
+mixer.music.load("mao-zedong-propaganda-music-red-sun-in-the-sky.mp3") #background music
+pop_sound = mixer.Sound("pop.mp3") #put stone sound
+mixer.music.set_volume(0.5)
+mixer.music.play(-1) # -1 czyli infinite loop
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
@@ -35,6 +36,7 @@ def main_menu():
         button_2 = pygame.Rect(50, 200, 200, 50)
         if button_1.collidepoint((mx, my)):
             if click:
+                mixer.Sound.play(pop_sound)
                 game()
         pygame.draw.rect(screen, (255, 0, 0), button_1)
         pygame.draw.rect(screen, (255, 0, 0), button_2)
@@ -76,10 +78,8 @@ def game():
                     correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
                     if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
                         continue
+                    mixer.Sound.play(pop_sound)
                     game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
                     game.playerToggle()
-                elif event.button == 3:
-                    # prawy przycisk
-                    game.board.rightclickdraw(screen, PLAYER_ONE_COLOR, x, y)
                 pygame.display.flip()
 main_menu()
