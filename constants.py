@@ -7,3 +7,5 @@ PLAYER_ONE_COLOR = (0, 0, 0)
 PLAYER_TWO_COLOR = (255, 255, 255)
 CIRCLE_RADIUS = 30
 CIRCLE_WIDTH = 5
+
+CLICKABLE_FIELD_SIZE = 10 # ilosc pixeli w kazdym kierunku od wspolrzednych punktu - zasięg przypisania kamienia do pola 
