@@ -67,7 +67,11 @@ def game():
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
                     # lewy przycisk
-                    game.board.drawStone(screen, PLAYER_ONE_COLOR, x, y)
+                    correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
+                    if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
+                        continue
+                    game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
+                    game.playerToggle()
                 elif event.button == 3:
                     # prawy przycisk
                     game.board.rightclickdraw(screen, PLAYER_ONE_COLOR, x, y)

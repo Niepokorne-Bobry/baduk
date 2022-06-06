@@ -1,13 +1,20 @@
 from asyncio.windows_events import NULL
 from enums.field_types import FieldTypes
+from enums.move_types import MoveType
 from group import Group
 
+
 class Player:
-    def __init__(self, fieldType: FieldTypes,game):
+    def __init__(self, fieldType: FieldTypes, game, playerColor):
         self.__game = game
         self.__score = 0
         self.__fieldType = fieldType
         self.__groups: list[Group] = []
+        self.__playerColor = playerColor
+
+    @property
+    def playerColor(self):
+        return self.__playerColor
 
     @property
     def groups(self):
@@ -27,13 +34,12 @@ class Player:
         newGroups: list[Group] = []
         for group in self.groups:
             group.calculateGroupLiberties()
-            if group.groupLiberties is not 0:
+            if group.groupLiberties != 0:
                 newGroups.append(group)
             else:
                 for field in group.fields:
                     field.fieldType = FieldTypes.NONE
         self.__groups = newGroups
-
 
     @property
     def fieldType(self):
@@ -43,10 +49,14 @@ class Player:
     def score(self):
         return self.__score
 
-    def makeMove(self,x,y):
+    def makeMove(self, x, y):
         for i in range(self.__game.board.size):
             for j in range(self.__game.board.size):
-                if((abs(self.__game.board.fields[i][j].coordX - x) < 10) and
-                abs(self.__game.board.fields[i][j].coordY - y) < 10):
-                    return self.__game.board.fields[i][j].coordX, self.__game.board.fields[i][j].coordY
-        return -1,-1
+                if ((abs(self.__game.board.fields[i][j].coordX - x) < 10) and
+                        abs(self.__game.board.fields[i][j].coordY - y) < 10):
+                    if self.__game.validateMove(self.__game.board.fields[i][j].boardX, self.__game.board.fields[i][j].boardY) == MoveType.MOVE_OK:
+                        self.__game.board.fields[i][j].fieldType = self.__fieldType
+                        return self.__game.board.fields[i][j].coordX, self.__game.board.fields[i][j].coordY, self.__game.board.fields[i][j].boardX, self.__game.board.fields[i][j].boardY
+                    else:
+                        return -1, -1, -1, -1
+        return -1, -1, -1, -1
