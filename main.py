@@ -1,4 +1,5 @@
 import pygame, sys
+from pygame import mixer
 from game_class import Game
 from constants import size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
 
@@ -11,6 +12,11 @@ screen = pygame.display.set_mode((500, 500), 0, 32)
 
 font = pygame.font.SysFont(None, 20)
 
+#play music
+mixer.init()
+mixer.music.load("mao-zedong-propaganda-music-red-sun-in-the-sky.mp3")
+mixer.music.set_volume(0.7)
+mixer.music.play()
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
