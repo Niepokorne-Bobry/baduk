@@ -1,5 +1,5 @@
 from field import Field
-from constants import line_color, LINE_WIDTH, LINE_LENGTH, CIRCLE_WIDTH, CIRCLE_RADIUS
+from constants import HUD_SIZE, line_color, LINE_WIDTH, LINE_LENGTH, CIRCLE_WIDTH, CIRCLE_RADIUS
 import pygame
 
 
@@ -15,7 +15,7 @@ class Board:
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
                 tempRow.append(
-                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH), i, j, self))
+                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH) + HUD_SIZE, i, j, self))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
@@ -23,13 +23,13 @@ class Board:
     # funkcja do rysowania linii
     tempCoordinates = []
 
-    def draw_lines(self, screen, SIZE):
+    def draw_lines(self, screen, HUD_SIZE, SIZE):
         for i in range(self.__size):
             x = i * LINE_LENGTH
             # poziome linie
-            pygame.draw.line(screen, line_color, [0, LINE_LENGTH + x], [SIZE, LINE_LENGTH + x], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [0, LINE_LENGTH + x + HUD_SIZE], [SIZE, LINE_LENGTH + x + HUD_SIZE], LINE_WIDTH)
             # pionowe linie
-            pygame.draw.line(screen, line_color, [LINE_LENGTH + x, 0], [LINE_LENGTH + x, SIZE], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [LINE_LENGTH + x, HUD_SIZE], [LINE_LENGTH + x, SIZE+HUD_SIZE], LINE_WIDTH)
 
     @property
     def size(self):
