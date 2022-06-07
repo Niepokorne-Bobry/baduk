@@ -3,7 +3,7 @@ from pygame import mixer
 import time
 import datetime
 from game_class import Game
-from constants import GAME_TIME_STRING, HUD_SIZE, size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
+from constants import GAME_TIME_STRING, HUD_SIZE, PLAYER_MOVE_TIME, size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
 
 mainClock = pygame.time.Clock()
 from pygame.locals import *
@@ -81,22 +81,37 @@ def game():
     game.board.draw_lines(screen, HUD_SIZE, SIZE)
     pygame.display.flip()
     start = int(time.time())
+    pygame.time.set_timer(pygame.USEREVENT,1000) # sekundnik
+    active_player_move_time = PLAYER_MOVE_TIME
     running = True
     while running:
         draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font,GAME_TIME_STRING)[0]/2,0)
         draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0,10)
         draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface, screen.get_width() - pygame.font.Font.size(font2,black_player_score_literal)[0],10)
-        timer_string = str(datetime.timedelta(seconds = int(time.time()) - start))
-        timer_rect = draw_text(timer_string,font2, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font2,timer_string)[0]/2, 20)
-        if game.getActivePlayer().playerColor == PLAYER_ONE_COLOR:
-            pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.left-30,30-15/2),(game_time_rect.left-15,15),(game_time_rect.left-15,30)])
+        clock_string = str(datetime.timedelta(seconds = int(time.time()) - start))
+        clock_rect = draw_text(clock_string,font2, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font2,clock_string)[0]/2, 20)
+        pygame.display.update(clock_rect)
+        if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
+            poly = pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.left-30,30-15/2),(game_time_rect.left-15,15),(game_time_rect.left-15,30)])
+            timer_string = str(datetime.timedelta(seconds = active_player_move_time))
+            timer_rect = draw_text(timer_string,font2,(255, 255, 255),hud_surface, poly.left - pygame.font.Font.size(font2,timer_string)[0]-20,10)
         else:
-            pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.right+30,30-15/2),(game_time_rect.right+15,15),(game_time_rect.right+15,30)])
+            poly = pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.right+30,30-15/2),(game_time_rect.right+15,15),(game_time_rect.right+15,30)])
+            timer_string = str(datetime.timedelta(seconds = active_player_move_time))
+            timer_rect = draw_text(timer_string,font2,(255, 255, 255),hud_surface, poly.right + 20,10)
         screen.blit(hud_surface,(0,0))
-        pygame.display.update(timer_rect)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.USEREVENT:
+                    active_player_move_time-=1
+                    if active_player_move_time <= 0:
+                        game.playerToggle()
+                        pygame.display.flip()
+                        mixer.Sound.play(pop_sound)
+                        active_player_move_time = PLAYER_MOVE_TIME
+                    pygame.display.update(timer_rect)
+                    pygame.display.flip()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
@@ -104,6 +119,7 @@ def game():
                     correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
                     if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
                         continue
+                    active_player_move_time = PLAYER_MOVE_TIME
                     mixer.Sound.play(pop_sound)
                     game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
                     game.playerToggle()

@@ -13,3 +13,5 @@ CLICKABLE_FIELD_SIZE = 10 # ilosc pixeli w kazdym kierunku od wspolrzednych punk
 HUD_SIZE = 50
 
 GAME_TIME_STRING = 'Czas rozgrywki'
+
+PLAYER_MOVE_TIME = 10 #czas na wykonanie ruchu w sekundach
