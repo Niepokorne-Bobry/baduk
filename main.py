@@ -61,7 +61,6 @@ def main_menu():
 def game():
     bg_img = pygame.image.load("smoczek_tlo.png")
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
-    BG_COLOR = (50, 170, 156)
     pygame.init()
     screen = pygame.display.set_mode((SIZE, SIZE+HUD_SIZE))
     hud_size = (screen.get_width(),HUD_SIZE)
@@ -70,20 +69,26 @@ def game():
     pygame.display.set_caption('Baduk')
     screen.blit(bg_img, (0, HUD_SIZE))
     screen.blit(hud_surface,(0,0))
-    # screen.fill(BG_COLOR)
     game = Game(size)
+
+    white_player_score_literal = f'Biały   {game.players[0].score}'
+    black_player_score_literal = f'{game.players[1].score}   Czarny'
+
+    draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0,10)
+    draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface, screen.get_width() - pygame.font.Font.size(font2,black_player_score_literal)[0],10)
+    screen.blit(hud_surface,(0,0))
     game.board.draw_lines(screen, HUD_SIZE, SIZE)
     pygame.display.flip()
     start = int(time.time())
     running = True
-    x=0
     while running:
-        hud_surface.fill((0,0,0))
         draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font,GAME_TIME_STRING)[0]/2,0)
+        draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0,10)
+        draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface, screen.get_width() - pygame.font.Font.size(font2,black_player_score_literal)[0],10)
         timer_string = str(datetime.timedelta(seconds = int(time.time()) - start))
-        rect = draw_text(timer_string,font2, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font2,timer_string)[0]/2, 20)
+        timer_rect = draw_text(timer_string,font2, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font2,timer_string)[0]/2, 20)
         screen.blit(hud_surface,(0,0))
-        pygame.display.update(rect)
+        pygame.display.update(timer_rect)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -98,4 +103,5 @@ def game():
                     game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
                     game.playerToggle()
                     pygame.display.flip()
+        hud_surface.fill((0,0,0))
 main_menu()

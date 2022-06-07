@@ -15,6 +15,10 @@ class Game:
     def board(self):
         return self.__board
 
+    @property
+    def players(self):
+        return self.__players
+
     def validateMove(self, xCoord: int, yCoord: int):
         if self.__board.fields[xCoord][yCoord].fieldType != FieldTypes.NONE:
             return MoveType.MOVE_ILLEGAL
