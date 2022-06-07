@@ -65,7 +65,7 @@ def game():
     screen = pygame.display.set_mode((SIZE, SIZE+HUD_SIZE))
     hud_size = (screen.get_width(),HUD_SIZE)
     hud_surface = pygame.Surface(hud_size)
-    draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font,GAME_TIME_STRING)[0]/2,0)
+    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font,GAME_TIME_STRING)[0]/2,0)
     pygame.display.set_caption('Baduk')
     screen.blit(bg_img, (0, HUD_SIZE))
     screen.blit(hud_surface,(0,0))
@@ -76,6 +76,7 @@ def game():
 
     draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0,10)
     draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface, screen.get_width() - pygame.font.Font.size(font2,black_player_score_literal)[0],10)
+    pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.right+30,30-15/2),(game_time_rect.right+15,15),(game_time_rect.right+15,30)])
     screen.blit(hud_surface,(0,0))
     game.board.draw_lines(screen, HUD_SIZE, SIZE)
     pygame.display.flip()
@@ -87,6 +88,10 @@ def game():
         draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface, screen.get_width() - pygame.font.Font.size(font2,black_player_score_literal)[0],10)
         timer_string = str(datetime.timedelta(seconds = int(time.time()) - start))
         timer_rect = draw_text(timer_string,font2, (255, 255, 255), hud_surface, screen.get_width()/2 - pygame.font.Font.size(font2,timer_string)[0]/2, 20)
+        if game.getActivePlayer().playerColor == PLAYER_ONE_COLOR:
+            pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.left-30,30-15/2),(game_time_rect.left-15,15),(game_time_rect.left-15,30)])
+        else:
+            pygame.draw.polygon(hud_surface,(255,255,255), points=[(game_time_rect.right+30,30-15/2),(game_time_rect.right+15,15),(game_time_rect.right+15,30)])
         screen.blit(hud_surface,(0,0))
         pygame.display.update(timer_rect)
         for event in pygame.event.get():
