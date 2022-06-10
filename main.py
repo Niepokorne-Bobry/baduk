@@ -89,6 +89,9 @@ def game():
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # sekundnik
     active_player_move_time = PLAYER_MOVE_TIME
 
+    pass_button = pygame.Rect(SIZE/2 - SIZE/4, BUTTON_SECTION_POS_Y+PLAYER_BUTTONS_SECTION_SIZE*0.25, SIZE/4, SIZE/2)
+    surr_button = pygame.Rect(pass_button.right + 50, BUTTON_SECTION_POS_Y+PLAYER_BUTTONS_SECTION_SIZE*0.25, SIZE/4, SIZE/2)
+
     running = True
     while running:
         if game.getActivePlayer().isPassing and game.getInactivePlayer().isPassing and game.gameEnd is False:
@@ -120,17 +123,29 @@ def game():
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
                     # lewy przycisk
-                    correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
-                    if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
-                        continue
-                    active_player_move_time = PLAYER_MOVE_TIME
-                    mixer.Sound.play(pop_sound)
-                    game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
-                    pygame.display.flip()
-                    game.getActivePlayer().createGroups()
-                    game.clearFieldChecks()
-                    game.getInactivePlayer().updateGroups()
-                    game.playerToggle()
+                    if pass_button.collidepoint((x,y)):
+                        game.getActivePlayer().isPassing = True
+                        active_player_move_time = PLAYER_MOVE_TIME
+                        game.playerToggle()
+                    elif surr_button.collidepoint((x,y)):
+                        game.gameEnd = True
+                        game.gameScoreCalculation()
+                        hud_surface.fill(BLACK)
+                        draw_hud(game, hud_surface, start)
+                        draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time, pygame.mouse.get_pos())
+                        pygame.display.flip()
+                    else:
+                        correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
+                        if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
+                            continue
+                        active_player_move_time = PLAYER_MOVE_TIME
+                        mixer.Sound.play(pop_sound)
+                        game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
+                        pygame.display.flip()
+                        game.getActivePlayer().createGroups()
+                        game.clearFieldChecks()
+                        game.getInactivePlayer().updateGroups()
+                        game.playerToggle()
 
 
 def draw_score(game,surface):
@@ -168,6 +183,7 @@ def draw_buttons_section(surface, text_color, button_color, button_color_clicked
     buttons_height = surface_height/2
     pass_button = pygame.draw.rect(surface, button_color, [surface_width/2 - buttons_width/2, surface_height*0.25, buttons_width, buttons_height], 0, 15)
     surrender_button = pygame.draw.rect(surface, button_color, [pass_button.right + 50, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    #koordynaty myszki z uwzglednionym offsetem macierzystej powierzchni
     x = mouse_pos[0]
     y = mouse_pos[1] - BUTTON_SECTION_POS_Y
 
@@ -191,5 +207,7 @@ def draw_hud(game, surface, beginning_time):
     draw_score(game, surface)
     draw_clock(surface, beginning_time)
     draw_turn_pointer(game, surface, game_time_rect)
+
+
 
 main_menu()
