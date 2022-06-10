@@ -15,7 +15,7 @@ class Board:
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
                 tempRow.append(
-                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH) + HUD_SIZE, i, j, self))
+                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH) + HUD_SIZE, j, i, self))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []

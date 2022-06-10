@@ -9,3 +9,6 @@ class IntContainer:
 
     def intIncrement(self):
         self.__int += 1
+
+    def resetInt(self):
+        self.__int = 0

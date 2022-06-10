@@ -12,6 +12,15 @@ class Player:
         self.__fieldType = fieldType
         self.__groups: list[Group] = []
         self.__playerColor = playerColor
+        self.__isPassing = False
+
+    @property
+    def isPassing(self):
+        return self.__isPassing
+
+    @isPassing.setter
+    def isPassing(self, newVal: bool):
+        self.__isPassing = newVal
 
     @property
     def playerColor(self):
@@ -22,6 +31,7 @@ class Player:
         return self.__groups
 
     def createGroups(self):
+        self.__groups.clear()
         newGroup: Group
         for i in range(self.__game.board.size):
             for j in range(self.__game.board.size):
@@ -29,17 +39,26 @@ class Player:
                     continue
                 newGroup = Group(self.fieldType)
                 newGroup.addFieldsToGroup(self.__game.board.fields[i][j])
-                self.groups.append(newGroup)
+                if newGroup.size() > 0:
+                    self.groups.append(newGroup)
 
     def updateGroups(self):
         newGroups: list[Group] = []
+        lostPoints = 0
         for group in self.groups:
+            lostPoints = 0
             group.calculateGroupLiberties()
-            if group.groupLiberties != 0:
+            print("Group type: " + str(group.groupType) + " liberties: " + str(group.groupLiberties))
+            if group.groupLiberties > 0:
                 newGroups.append(group)
-            else:
+            elif group.groupLiberties == 0:
                 for field in group.fields:
                     field.fieldType = FieldTypes.NONE
+                    lostPoints += 1
+                if self.__fieldType == FieldTypes.PLAYER_1_STONE:
+                    self.__game.players[1].score += lostPoints
+                elif self.__fieldType == FieldTypes.PLAYER_2_STONE:
+                    self.__game.players[0].score += lostPoints
         self.__groups = newGroups
 
     @property
@@ -49,6 +68,10 @@ class Player:
     @property
     def score(self):
         return self.__score
+
+    @score.setter
+    def score(self, newScore):
+        self.__score = newScore
 
     def makeMove(self, x, y):
         for i in range(self.__game.board.size):
