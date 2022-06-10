@@ -42,7 +42,3 @@ class Board:
     # rysowanie kamienia o okreslonym kolorze (color) na wspolrzednych xi y
     def drawStone(self, field, color, x, y):
         pygame.draw.circle(field, color, [x, y], CIRCLE_RADIUS)
-
-    # "----#--------" rysowanie kolka bez wypelnienia
-    def rightclickdraw(self, field, color, x, y):
-        pygame.draw.circle(field, color, [x, y], CIRCLE_RADIUS, CIRCLE_WIDTH)

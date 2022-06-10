@@ -13,7 +13,14 @@ CIRCLE_WIDTH = 5
 CLICKABLE_FIELD_SIZE = 10 # ilosc pixeli w kazdym kierunku od wspolrzednych punktu - zasięg przypisania kamienia do pola 
 
 HUD_SIZE = 50
+PLAYER_BUTTONS_SECTION_SIZE = 100
 
 GAME_TIME_STRING = 'Czas rozgrywki'
 
 PLAYER_MOVE_TIME = 10 #czas na wykonanie ruchu w sekundach
+
+#colors
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
