@@ -3,7 +3,7 @@ from pygame import mixer
 import time
 import datetime
 from game_class import Game
-from constants import GAME_TIME_STRING, HUD_SIZE, PLAYER_MOVE_TIME, size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
+from constants import GAME_TIME_STRING, HUD_SIZE, PLAYER_MOVE_TIME, size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR, FPS
 
 mainClock = pygame.time.Clock()
 from pygame.locals import *
@@ -61,7 +61,7 @@ def main_menu():
                 if event.button == 1:
                     click = True
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 def game():
@@ -70,7 +70,11 @@ def game():
     pygame.init()
     screen = pygame.display.set_mode((SIZE, SIZE + HUD_SIZE))
     hud_size = (screen.get_width(), HUD_SIZE)
+    board_surface_rect = screen.get_rect()
+    print(board_surface_rect)
     hud_surface = pygame.Surface(hud_size)
+    hud_surface_rect = hud_surface.get_rect()
+    print(hud_surface_rect)
     game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface,
                                screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
     pygame.display.set_caption('Baduk')
@@ -98,16 +102,9 @@ def game():
         if game.getActivePlayer().isPassing and game.getInactivePlayer().isPassing and game.gameEnd is False:
             game.gameEnd = True
             game.gameScoreCalculation()
-        white_player_score_literal = f'Biały   {game.players[1].score}'
-        black_player_score_literal = f'{game.players[0].score}   Czarny'
-        draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface,
-                  screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
-        draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0, 10)
-        draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface,
-                  screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
-        clock_string = str(datetime.timedelta(seconds=int(time.time()) - start)) if game.gameEnd is False else ""
-        clock_rect = draw_text(clock_string, font2, (255, 255, 255), hud_surface,
-                               screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
+        
+        draw_score(game, hud_surface)
+        clock_rect = draw_clock(game, hud_surface, start)
         pygame.display.update(clock_rect)
         if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
             poly = pygame.draw.polygon(hud_surface, (255, 255, 255),
@@ -131,11 +128,11 @@ def game():
                 if active_player_move_time <= 0 and game.gameEnd is False:
                     game.getActivePlayer().isPassing = True
                     game.playerToggle()
-                    pygame.display.flip()
+                    #pygame.display.flip()
                     mixer.Sound.play(pop_sound)
                     active_player_move_time = PLAYER_MOVE_TIME
                 pygame.display.update(timer_rect) if game.gameEnd is False else None
-                pygame.display.flip()
+                #pygame.display.flip()
             if event.type == pygame.MOUSEBUTTONDOWN and game.gameEnd is False:
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
@@ -152,6 +149,20 @@ def game():
                     game.playerToggle()
                     pygame.display.flip()
         hud_surface.fill((0, 0, 0))
+
+def draw_score(game,surface,):
+    white_player_score_literal = f'Biały   {game.players[1].score}'
+    black_player_score_literal = f'{game.players[0].score}   Czarny'
+    draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+                screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    draw_text(white_player_score_literal, font2, (255, 255, 255), surface, 0, 10)
+    draw_text(black_player_score_literal, font2, (255, 255, 255), surface,
+                screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
+
+def draw_clock(game, surface, beginning_time):
+    clock_string = str(datetime.timedelta(seconds=int(time.time()) - beginning_time)) if game.gameEnd is False else ""
+    return draw_text(clock_string, font2, (255, 255, 255), surface,
+                        screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
 
 
 main_menu()
