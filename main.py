@@ -82,12 +82,8 @@ def game():
     screen.blit(hud_surface, (0, 0))
     game = Game(size)
 
-    white_player_score_literal = f'Biały   {game.players[1].score}'
-    black_player_score_literal = f'{game.players[0].score}   Czarny'
+    draw_score(game, hud_surface)
 
-    draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0, 10)
-    draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface,
-              screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
     pygame.draw.polygon(hud_surface, (255, 255, 255),
                         points=[(game_time_rect.right + 30, 30 - 15 / 2), (game_time_rect.right + 15, 15),
                                 (game_time_rect.right + 15, 30)])
@@ -107,16 +103,11 @@ def game():
         clock_rect = draw_clock(game, hud_surface, start)
         pygame.display.update(clock_rect)
         if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
-            poly = pygame.draw.polygon(hud_surface, (255, 255, 255),
-                                       points=[(game_time_rect.left - 30, 30 - 15 / 2), (game_time_rect.left - 15, 15),
-                                               (game_time_rect.left - 15, 30)]) if game.gameEnd is False else None
-            timer_string = str(datetime.timedelta(seconds=active_player_move_time)) if game.gameEnd is False else ""
+            poly = draw_turn_pointer(game, hud_surface, game_time_rect)
             timer_rect = draw_text(timer_string, font2, (255, 255, 255), hud_surface,
                                    poly.left - pygame.font.Font.size(font2, timer_string)[0] - 20, 10) if game.gameEnd is False else None
         else:
-            poly = pygame.draw.polygon(hud_surface, (255, 255, 255), points=[(game_time_rect.right + 30, 30 - 15 / 2),
-                                                                             (game_time_rect.right + 15, 15),
-                                                                             (game_time_rect.right + 15, 30)]) if game.gameEnd is False else None
+            poly = draw_turn_pointer(game, hud_surface, game_time_rect)
             timer_string = str(datetime.timedelta(seconds=active_player_move_time)) if game.gameEnd is False else ""
             timer_rect = draw_text(timer_string, font2, (255, 255, 255), hud_surface, poly.right + 20, 10) if game.gameEnd is False else None
         screen.blit(hud_surface, (0, 0))
@@ -163,6 +154,19 @@ def draw_clock(game, surface, beginning_time):
     clock_string = str(datetime.timedelta(seconds=int(time.time()) - beginning_time)) if game.gameEnd is False else ""
     return draw_text(clock_string, font2, (255, 255, 255), surface,
                         screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
+
+def draw_turn_pointer(game, surface, relative_item):
+    if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
+            poly = pygame.draw.polygon(surface, (255, 255, 255),
+                                       points=[(relative_item.left - 30, 30 - 15 / 2), (relative_item.left - 15, 15),
+                                               (relative_item.left - 15, 30)]) if game.gameEnd is False else None
+    else:
+            poly = pygame.draw.polygon(surface, (255, 255, 255), 
+                                        points=[(relative_item.right + 30, 30 - 15 / 2),
+                                                (relative_item.right + 15, 15),
+                                                (relative_item.right + 15, 30)]) if game.gameEnd is False else None
+    return poly
+    
 
 
 main_menu()
