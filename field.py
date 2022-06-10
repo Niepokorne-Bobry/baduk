@@ -15,6 +15,10 @@ class Field:
         self.__board = board
 
     @property
+    def liberties(self):
+        return self.__liberties
+
+    @property
     def wasChecked(self):
         return self.__wasChecked
 
@@ -23,52 +27,52 @@ class Field:
         self.__wasChecked = newVal
 
     def getLeftNeighbour(self):
-        try:
-            return self.__board.fields[self.__boardY][self.__boardX - 1]
-        except:
+        if self.boardX - 1 < 0:
             raise MemoryError("Can't get left neighbour")
+        return self.__board.fields[self.__boardY][self.__boardX - 1]
 
     def getRightNeighbour(self):
-        try:
-            return self.__board.fields[self.__boardY][self.__boardX + 1]
-        except:
+        if self.boardX + 1 >= self.__board.size:
             raise MemoryError("Can't get right neighbour")
+        return self.__board.fields[self.__boardY][self.__boardX + 1]
 
     def getUpperNeighbour(self):
-        try:
-            return self.__board.fields[self.__boardY - 1][self.__boardX]
-        except:
+        if self.boardY - 1 < 0:
             raise MemoryError("Can't get upper neighbour")
+        return self.__board.fields[self.__boardY - 1][self.__boardX]
 
     def getLowerNeighbour(self):
-        try:
-            return self.__board.fields[self.__boardY + 1][self.__boardX]
-        except:
+        if self.boardY + 1 >= self.__board.size:
             raise MemoryError("Can't get lower neighbour")
+        return self.__board.fields[self.__boardY + 1][self.__boardX]
 
     def calculateFieldLiberties(self):
         libs = 0
         try:
             if self.getLowerNeighbour().fieldType == FieldTypes.NONE:
+                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has lower neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getLeftNeighbour().fieldType == FieldTypes.NONE:
+                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has left neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getUpperNeighbour().fieldType == FieldTypes.NONE:
+                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has upper neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getRightNeighbour().fieldType == FieldTypes.NONE:
+                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has right neighbour")
                 libs += 1
         except:
             pass
-        return libs
+        self.__liberties = libs
 
     @property
     def boardX(self):

@@ -14,7 +14,8 @@ class Group:
     def calculateGroupLiberties(self):
         libs = 0
         for field in self.fields:
-            libs += field.calculateFieldLiberties()
+            field.calculateFieldLiberties()
+            libs += field.liberties
         self.__groupLiberties = libs
 
     @property
