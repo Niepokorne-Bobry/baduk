@@ -67,52 +67,42 @@ def main_menu():
 def game():
     bg_img = pygame.image.load("smoczek_tlo.png")
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
+
+    #inicjalizacja pygame i glownego surface
     pygame.init()
     screen = pygame.display.set_mode((SIZE, SIZE + HUD_SIZE + PLAYER_BUTTONS_SECTION_SIZE))
+    
+    #inicjalizacja surface gornego i dolnego paska informacji
     hud_size = (screen.get_width(), HUD_SIZE)
-
     hud_surface = pygame.Surface(hud_size)
     buttons_section_surface = pygame.Surface((screen.get_width(), PLAYER_BUTTONS_SECTION_SIZE))
 
-    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface,
-                               screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
     pygame.display.set_caption('Baduk')
     screen.blit(bg_img, (0, HUD_SIZE))
-    screen.blit(hud_surface, (0, 0))
 
-    draw_buttons_section(buttons_section_surface, WHITE, RED, PLAYER_MOVE_TIME)
-
-    screen.blit(buttons_section_surface, (0, SIZE + HUD_SIZE))
+    #inicjalizacja gry
     game = Game(size)
-
-    draw_score(game, hud_surface)
-
-    pygame.draw.polygon(hud_surface, (255, 255, 255),
-                        points=[(game_time_rect.right + 30, 30 - 15 / 2), (game_time_rect.right + 15, 15),
-                                (game_time_rect.right + 15, 30)])
-    screen.blit(hud_surface, (0, 0))
     game.board.draw_lines(screen, HUD_SIZE, SIZE)
     pygame.display.flip()
+
+    #inicjalizacja timera
     start = int(time.time())
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # sekundnik
     active_player_move_time = PLAYER_MOVE_TIME
+
     running = True
     while running:
         if game.getActivePlayer().isPassing and game.getInactivePlayer().isPassing and game.gameEnd is False:
             game.gameEnd = True
             game.gameScoreCalculation()
 
-        draw_score(game, hud_surface)
+        #rysowanie gornego i dolnego paska informacji, przyciskow itp.
+        draw_hud(game, hud_surface, start)
         draw_buttons_section(buttons_section_surface, WHITE, RED, active_player_move_time)
 
-        clock_rect = draw_clock(game, hud_surface, start)
-        screen.blit(buttons_section_surface, (0, SIZE + HUD_SIZE))
+        #odswiezanie paskow  ---  buttons_section     hud_surface
+        pygame.display.update([(0, 700, 700, 800), (0, 0, 700, 50)])
 
-        draw_turn_pointer(game, hud_surface, game_time_rect)
-
-        screen.blit(hud_surface, (0, 0))
-
-        pygame.display.update([clock_rect, (0, 700, 700, 800)])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -157,7 +147,7 @@ def draw_clock(game, surface, beginning_time):
                         screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
 
 def draw_turn_pointer(game, surface, relative_item):
-    if game.getActivePlayer().playerColor == PLAYER_ONE_COLOR:
+    if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
             poly = pygame.draw.polygon(surface, (255, 255, 255),
                                        points=[(relative_item.left - 30, 30 - 15 / 2), (relative_item.left - 15, 15),
                                                (relative_item.left - 15, 30)]) if game.gameEnd is False else None
@@ -188,5 +178,11 @@ def draw_buttons_section(surface, text_color, button_color, active_player_move_t
     draw_text(timer_string, font2, WHITE, surface, title_rect.left, title_rect.bottom)
     screen.blit(surface, (0, SIZE + HUD_SIZE))
 
+def draw_hud(game, surface, beginning_time):
+    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+                               screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    draw_clock(game, surface, beginning_time)
+    draw_turn_pointer(game, surface, game_time_rect)
+    screen.blit(surface, (0, 0))
 
 main_menu()
