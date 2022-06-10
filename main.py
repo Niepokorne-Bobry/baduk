@@ -3,7 +3,7 @@ from pygame import mixer
 import time
 import datetime
 from game_class import Game
-from constants import GAME_TIME_STRING, HUD_SIZE, PLAYER_MOVE_TIME, size, SIZE, PLAYER_ONE_COLOR, PLAYER_TWO_COLOR
+from constants import *
 
 mainClock = pygame.time.Clock()
 from pygame.locals import *
@@ -61,68 +61,54 @@ def main_menu():
                 if event.button == 1:
                     click = True
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 def game():
     bg_img = pygame.image.load("smoczek_tlo.png")
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
+
+    #inicjalizacja pygame i glownego surface
     pygame.init()
-    screen = pygame.display.set_mode((SIZE, SIZE + HUD_SIZE))
-    hud_size = (screen.get_width(), HUD_SIZE)
-    hud_surface = pygame.Surface(hud_size)
-    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface,
-                               screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    screen = pygame.display.set_mode((SIZE, SIZE + HUD_SIZE + PLAYER_BUTTONS_SECTION_SIZE))
+    
+    #inicjalizacja surface gornego i dolnego paska informacji
+    hud_surface = screen.subsurface((0, 0), (SIZE, HUD_SIZE))
+    buttons_section_surface = screen.subsurface((0, SIZE + HUD_SIZE),(SIZE, PLAYER_BUTTONS_SECTION_SIZE))
+
     pygame.display.set_caption('Baduk')
     screen.blit(bg_img, (0, HUD_SIZE))
-    screen.blit(hud_surface, (0, 0))
+
+    #inicjalizacja gry
     game = Game(size)
-
-    white_player_score_literal = f'Biały   {game.players[1].score}'
-    black_player_score_literal = f'{game.players[0].score}   Czarny'
-
-    draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0, 10)
-    draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface,
-              screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
-    pygame.draw.polygon(hud_surface, (255, 255, 255),
-                        points=[(game_time_rect.right + 30, 30 - 15 / 2), (game_time_rect.right + 15, 15),
-                                (game_time_rect.right + 15, 30)])
-    screen.blit(hud_surface, (0, 0))
     game.board.draw_lines(screen, HUD_SIZE, SIZE)
     pygame.display.flip()
+
+    #inicjalizacja timera
     start = int(time.time())
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # sekundnik
     active_player_move_time = PLAYER_MOVE_TIME
+
+    pass_button = pygame.Rect(SIZE/2 - SIZE/4, BUTTON_SECTION_POS_Y+PLAYER_BUTTONS_SECTION_SIZE*0.25, SIZE/4, SIZE/2)
+    surr_button = pygame.Rect(pass_button.right + 50, BUTTON_SECTION_POS_Y+PLAYER_BUTTONS_SECTION_SIZE*0.25, SIZE/4, SIZE/2)
+
     running = True
     while running:
         if game.getActivePlayer().isPassing and game.getInactivePlayer().isPassing and game.gameEnd is False:
             game.gameEnd = True
             game.gameScoreCalculation()
-        white_player_score_literal = f'Biały   {game.players[1].score}'
-        black_player_score_literal = f'{game.players[0].score}   Czarny'
-        draw_text(GAME_TIME_STRING, font, (255, 255, 255), hud_surface,
-                  screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
-        draw_text(white_player_score_literal, font2, (255, 255, 255), hud_surface, 0, 10)
-        draw_text(black_player_score_literal, font2, (255, 255, 255), hud_surface,
-                  screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
-        clock_string = str(datetime.timedelta(seconds=int(time.time()) - start)) if game.gameEnd is False else ""
-        clock_rect = draw_text(clock_string, font2, (255, 255, 255), hud_surface,
-                               screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
-        pygame.display.update(clock_rect)
-        if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
-            poly = pygame.draw.polygon(hud_surface, (255, 255, 255),
-                                       points=[(game_time_rect.left - 30, 30 - 15 / 2), (game_time_rect.left - 15, 15),
-                                               (game_time_rect.left - 15, 30)]) if game.gameEnd is False else None
-            timer_string = str(datetime.timedelta(seconds=active_player_move_time)) if game.gameEnd is False else ""
-            timer_rect = draw_text(timer_string, font2, (255, 255, 255), hud_surface,
-                                   poly.left - pygame.font.Font.size(font2, timer_string)[0] - 20, 10) if game.gameEnd is False else None
-        else:
-            poly = pygame.draw.polygon(hud_surface, (255, 255, 255), points=[(game_time_rect.right + 30, 30 - 15 / 2),
-                                                                             (game_time_rect.right + 15, 15),
-                                                                             (game_time_rect.right + 15, 30)]) if game.gameEnd is False else None
-            timer_string = str(datetime.timedelta(seconds=active_player_move_time)) if game.gameEnd is False else ""
-            timer_rect = draw_text(timer_string, font2, (255, 255, 255), hud_surface, poly.right + 20, 10) if game.gameEnd is False else None
-        screen.blit(hud_surface, (0, 0))
+
+        if game.gameEnd is False: 
+            hud_surface.fill(BLACK)
+            buttons_section_surface.fill(BLACK)
+            #rysowanie gornego i dolnego paska informacji, przyciskow itp.
+            draw_hud(game, hud_surface, start)
+            draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time, pygame.mouse.get_pos())
+
+            #odswiezanie paskow (x, y), (width, height)
+            pygame.display.update([(buttons_section_surface.get_abs_offset(), (SIZE, PLAYER_BUTTONS_SECTION_SIZE)),  #buttons_section subsurface coords
+                                    (hud_surface.get_abs_offset(), (SIZE, HUD_SIZE))]) #hud subsurface coords
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -131,27 +117,97 @@ def game():
                 if active_player_move_time <= 0 and game.gameEnd is False:
                     game.getActivePlayer().isPassing = True
                     game.playerToggle()
-                    pygame.display.flip()
                     mixer.Sound.play(pop_sound)
                     active_player_move_time = PLAYER_MOVE_TIME
-                pygame.display.update(timer_rect) if game.gameEnd is False else None
-                pygame.display.flip()
             if event.type == pygame.MOUSEBUTTONDOWN and game.gameEnd is False:
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
                     # lewy przycisk
-                    correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
-                    if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
-                        continue
-                    active_player_move_time = PLAYER_MOVE_TIME
-                    mixer.Sound.play(pop_sound)
-                    game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
-                    game.getActivePlayer().createGroups()
-                    game.clearFieldChecks()
-                    game.getInactivePlayer().updateGroups()
-                    game.playerToggle()
-                    pygame.display.flip()
-        hud_surface.fill((0, 0, 0))
+                    if pass_button.collidepoint((x,y)):
+                        game.getActivePlayer().isPassing = True
+                        active_player_move_time = PLAYER_MOVE_TIME
+                        game.playerToggle()
+                    elif surr_button.collidepoint((x,y)):
+                        game.gameEnd = True
+                        game.gameScoreCalculation()
+                        hud_surface.fill(BLACK)
+                        draw_hud(game, hud_surface, start)
+                        draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time, pygame.mouse.get_pos())
+                        pygame.display.flip()
+                    else:
+                        correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
+                        if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
+                            continue
+                        active_player_move_time = PLAYER_MOVE_TIME
+                        mixer.Sound.play(pop_sound)
+                        game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
+                        pygame.display.flip()
+                        game.getActivePlayer().createGroups()
+                        game.clearFieldChecks()
+                        game.getInactivePlayer().updateGroups()
+                        game.playerToggle()
+
+
+def draw_score(game,surface):
+    white_player_score_literal = f'Biały   {game.players[1].score}'
+    black_player_score_literal = f'{game.players[0].score}   Czarny'
+    draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+                screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    draw_text(white_player_score_literal, font2, (255, 255, 255), surface, 0, 10)
+    draw_text(black_player_score_literal, font2, (255, 255, 255), surface,
+                screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
+
+def draw_clock(surface, beginning_time):
+    clock_string = str(datetime.timedelta(seconds=int(time.time()) - beginning_time))
+    return draw_text(clock_string, font2, (255, 255, 255), surface,
+                        screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
+
+def draw_turn_pointer(game, surface, relative_item):
+    if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
+            poly = pygame.draw.polygon(surface, (255, 255, 255),
+                                       points=[(relative_item.left - 30, 30 - 15 / 2), (relative_item.left - 15, 15),
+                                               (relative_item.left - 15, 30)])
+    else:
+            poly = pygame.draw.polygon(surface, (255, 255, 255), 
+                                        points=[(relative_item.right + 30, 30 - 15 / 2),
+                                                (relative_item.right + 15, 15),
+                                                (relative_item.right + 15, 30)])
+    return poly
+
+def draw_buttons_section(surface, text_color, button_color, button_color_clicked, active_player_move_time, mouse_pos):
+    pass_text = font2.render("Pasuj", 1, text_color)
+    surr_text = font2.render("Poddanie", 1, text_color)
+    surface_width = surface.get_width()
+    surface_height = surface.get_height()
+    buttons_width = surface_width/4
+    buttons_height = surface_height/2
+    pass_button = pygame.draw.rect(surface, button_color, [surface_width/2 - buttons_width/2, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    surrender_button = pygame.draw.rect(surface, button_color, [pass_button.right + 50, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    #koordynaty myszki z uwzglednionym offsetem macierzystej powierzchni
+    x = mouse_pos[0]
+    y = mouse_pos[1] - BUTTON_SECTION_POS_Y
+
+    if pass_button.collidepoint((x, y)):
+        pass_button = pygame.draw.rect(surface, button_color_clicked, [surface_width/2 - buttons_width/2, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    if surrender_button.collidepoint((x, y)):
+        surrender_button = pygame.draw.rect(surface, button_color_clicked, [pass_button.right + 50, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    surface.blit(pass_text, (pass_button.center[0] - pygame.font.Font.size(font2, "Pasuj")[0]/2, 
+                            pass_button.center[1] - pygame.font.Font.size(font2, "Pasuj")[1]/2))
+    surface.blit(surr_text, (surrender_button.center[0] - pygame.font.Font.size(font2, "Poddanie")[0]/2, 
+                            surrender_button.center[1] - pygame.font.Font.size(font2, "Poddanie")[1]/2))
+
+    title_rect = draw_text("Czas na wykonanie ruchu",font, text_color, surface, 50, surface_height*0.25)
+
+    timer_string = str(datetime.timedelta(seconds=active_player_move_time))
+    draw_text(timer_string, font2, WHITE, surface, title_rect.left, title_rect.bottom)
+
+def draw_hud(game, surface, beginning_time):
+    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+                               screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    draw_score(game, surface)
+    draw_clock(surface, beginning_time)
+    draw_turn_pointer(game, surface, game_time_rect)
+
 
 
 main_menu()
