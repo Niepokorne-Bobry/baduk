@@ -108,10 +108,7 @@ def game():
         clock_rect = draw_clock(game, hud_surface, start)
         screen.blit(buttons_section_surface, (0, SIZE + HUD_SIZE))
 
-        if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
-            draw_turn_pointer(game, hud_surface, game_time_rect)
-        else:
-            draw_turn_pointer(game, hud_surface, game_time_rect)
+        draw_turn_pointer(game, hud_surface, game_time_rect)
 
         screen.blit(hud_surface, (0, 0))
 
@@ -124,10 +121,8 @@ def game():
                 if active_player_move_time <= 0 and game.gameEnd is False:
                     game.getActivePlayer().isPassing = True
                     game.playerToggle()
-                    #pygame.display.flip()
                     mixer.Sound.play(pop_sound)
                     active_player_move_time = PLAYER_MOVE_TIME
-                #pygame.display.flip()
             if event.type == pygame.MOUSEBUTTONDOWN and game.gameEnd is False:
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
@@ -138,11 +133,11 @@ def game():
                     active_player_move_time = PLAYER_MOVE_TIME
                     mixer.Sound.play(pop_sound)
                     game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
+                    pygame.display.flip()
                     game.getActivePlayer().createGroups()
                     game.clearFieldChecks()
                     game.getInactivePlayer().updateGroups()
                     game.playerToggle()
-                    #pygame.display.flip()
         hud_surface.fill(BLACK)
         buttons_section_surface.fill(BLACK)
 
@@ -162,7 +157,7 @@ def draw_clock(game, surface, beginning_time):
                         screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
 
 def draw_turn_pointer(game, surface, relative_item):
-    if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
+    if game.getActivePlayer().playerColor == PLAYER_ONE_COLOR:
             poly = pygame.draw.polygon(surface, (255, 255, 255),
                                        points=[(relative_item.left - 30, 30 - 15 / 2), (relative_item.left - 15, 15),
                                                (relative_item.left - 15, 30)]) if game.gameEnd is False else None
