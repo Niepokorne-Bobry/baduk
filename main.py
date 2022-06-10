@@ -100,7 +100,7 @@ def game():
             buttons_section_surface.fill(BLACK)
             #rysowanie gornego i dolnego paska informacji, przyciskow itp.
             draw_hud(game, hud_surface, start)
-            draw_buttons_section(buttons_section_surface, WHITE, RED, active_player_move_time, pygame.mouse.get_pos())
+            draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time, pygame.mouse.get_pos())
 
             #odswiezanie paskow (x, y), (width, height)
             pygame.display.update([(buttons_section_surface.get_abs_offset(), (SIZE, PLAYER_BUTTONS_SECTION_SIZE)),  #buttons_section subsurface coords
@@ -159,7 +159,7 @@ def draw_turn_pointer(game, surface, relative_item):
                                                 (relative_item.right + 15, 30)])
     return poly
 
-def draw_buttons_section(surface, text_color, button_color, active_player_move_time, mouse_pos):
+def draw_buttons_section(surface, text_color, button_color, button_color_clicked, active_player_move_time, mouse_pos):
     pass_text = font2.render("Pasuj", 1, text_color)
     surr_text = font2.render("Poddanie", 1, text_color)
     surface_width = surface.get_width()
@@ -168,6 +168,13 @@ def draw_buttons_section(surface, text_color, button_color, active_player_move_t
     buttons_height = surface_height/2
     pass_button = pygame.draw.rect(surface, button_color, [surface_width/2 - buttons_width/2, surface_height*0.25, buttons_width, buttons_height], 0, 15)
     surrender_button = pygame.draw.rect(surface, button_color, [pass_button.right + 50, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    x = mouse_pos[0]
+    y = mouse_pos[1] - BUTTON_SECTION_POS_Y
+
+    if pass_button.collidepoint((x, y)):
+        pass_button = pygame.draw.rect(surface, button_color_clicked, [surface_width/2 - buttons_width/2, surface_height*0.25, buttons_width, buttons_height], 0, 15)
+    if surrender_button.collidepoint((x, y)):
+        surrender_button = pygame.draw.rect(surface, button_color_clicked, [pass_button.right + 50, surface_height*0.25, buttons_width, buttons_height], 0, 15)
     surface.blit(pass_text, (pass_button.center[0] - pygame.font.Font.size(font2, "Pasuj")[0]/2, 
                             pass_button.center[1] - pygame.font.Font.size(font2, "Pasuj")[1]/2))
     surface.blit(surr_text, (surrender_button.center[0] - pygame.font.Font.size(font2, "Poddanie")[0]/2, 
