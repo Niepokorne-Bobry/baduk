@@ -100,7 +100,7 @@ def game():
         draw_hud(game, hud_surface, start)
         draw_buttons_section(buttons_section_surface, WHITE, RED, active_player_move_time)
 
-        #odswiezanie paskow  ---  buttons_section     hud_surface
+        #odswiezanie paskow  ---  buttons_section     hud_surface  (koordynaty rectangles)
         pygame.display.update([(0, 700, 700, 800), (0, 0, 700, 50)])
 
         for event in pygame.event.get():
@@ -181,6 +181,7 @@ def draw_buttons_section(surface, text_color, button_color, active_player_move_t
 def draw_hud(game, surface, beginning_time):
     game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
                                screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
+    draw_score(game, surface)
     draw_clock(game, surface, beginning_time)
     draw_turn_pointer(game, surface, game_time_rect)
     screen.blit(surface, (0, 0))
