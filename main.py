@@ -73,9 +73,8 @@ def game():
     screen = pygame.display.set_mode((SIZE, SIZE + HUD_SIZE + PLAYER_BUTTONS_SECTION_SIZE))
     
     #inicjalizacja surface gornego i dolnego paska informacji
-    hud_size = (screen.get_width(), HUD_SIZE)
-    hud_surface = pygame.Surface(hud_size)
-    buttons_section_surface = pygame.Surface((screen.get_width(), PLAYER_BUTTONS_SECTION_SIZE))
+    hud_surface = screen.subsurface((0, 0), (SIZE, HUD_SIZE))
+    buttons_section_surface = screen.subsurface((0, SIZE + HUD_SIZE),(SIZE, PLAYER_BUTTONS_SECTION_SIZE))
 
     pygame.display.set_caption('Baduk')
     screen.blit(bg_img, (0, HUD_SIZE))
@@ -103,8 +102,9 @@ def game():
             draw_hud(game, hud_surface, start)
             draw_buttons_section(buttons_section_surface, WHITE, RED, active_player_move_time, pygame.mouse.get_pos())
 
-            #odswiezanie paskow  ---  buttons_section     hud_surface
-            pygame.display.update([(0, 700, 700, 800), (0, 0, 700, 50)])
+            #odswiezanie paskow (x, y), (width, height)
+            pygame.display.update([(buttons_section_surface.get_abs_offset(), (SIZE, PLAYER_BUTTONS_SECTION_SIZE)),  #buttons_section subsurface coords
+                                    (hud_surface.get_abs_offset(), (SIZE, HUD_SIZE))]) #hud subsurface coords
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -177,7 +177,6 @@ def draw_buttons_section(surface, text_color, button_color, active_player_move_t
 
     timer_string = str(datetime.timedelta(seconds=active_player_move_time))
     draw_text(timer_string, font2, WHITE, surface, title_rect.left, title_rect.bottom)
-    screen.blit(surface, (0, SIZE + HUD_SIZE))
 
 def draw_hud(game, surface, beginning_time):
     game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
@@ -185,6 +184,5 @@ def draw_hud(game, surface, beginning_time):
     draw_score(game, surface)
     draw_clock(surface, beginning_time)
     draw_turn_pointer(game, surface, game_time_rect)
-    screen.blit(surface, (0, 0))
 
 main_menu()
