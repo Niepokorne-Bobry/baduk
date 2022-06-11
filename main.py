@@ -10,7 +10,11 @@ from pygame.locals import *
 
 pygame.init()
 pygame.display.set_caption('Baduk')
+
 screen = pygame.display.set_mode((500, 500), 0, 32)
+
+icon = pygame.image.load("emperor.png")
+pygame.display.set_icon(icon)
 
 font = pygame.font.SysFont(None, 20)
 font2 = pygame.font.SysFont(None, 40)
