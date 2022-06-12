@@ -1,3 +1,4 @@
+import os
 import pygame, sys
 from pygame import mixer
 import time
@@ -14,7 +15,7 @@ pygame.display.set_caption('Baduk')
 
 screen = pygame.display.set_mode((500, 500), 0, 32)
 
-icon = pygame.image.load("emperor.png")
+icon = pygame.image.load(os.path.join("assets/sounds","emperor.png"))
 pygame.display.set_icon(icon)
 
 font = pygame.font.SysFont(None, 20)
@@ -22,7 +23,7 @@ font2 = pygame.font.SysFont(None, 40)
 
 # play music
 mixer.init()
-mixer.music.load("mao-zedong-propaganda-music-red-sun-in-the-sky.mp3")  # background music
+mixer.music.load(os.path.join("assets/sounds","mao-zedong-propaganda-music-red-sun-in-the-sky.mp3"))  # background music
 pop_sound = mixer.Sound("pop.mp3")  # put stone sound
 mixer.music.set_volume(0.05)
 mixer.music.play(-1)  # -1 czyli infinite loop
@@ -70,7 +71,7 @@ def main_menu():
 
 
 def game():
-    bg_img = pygame.image.load("smoczek_tlo.png")
+    bg_img = pygame.image.load(os.path.join("assets/images","smoczek_tlo.png"))
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
 
     #inicjalizacja pygame i glownego surface
