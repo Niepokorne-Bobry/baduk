@@ -103,6 +103,11 @@ def game():
         if game.getActivePlayer().isPassing and game.getInactivePlayer().isPassing and game.gameEnd is False:
             game.gameEnd = True
             game.gameScoreCalculation()
+            hud_surface.fill(BLACK)
+            buttons_section_surface.fill(BLACK)
+            draw_buttons_section(buttons_section_surface, WHITE, RED, RED, active_player_move_time, pygame.mouse.get_pos())
+            draw_hud(game, hud_surface, start)
+            pygame.display.flip()
 
         if game.gameEnd is False: 
             hud_surface.fill(BLACK)
@@ -131,6 +136,7 @@ def game():
                     # lewy przycisk
                     if pass_button.collidepoint((x,y)):
                         game.getActivePlayer().isPassing = True
+                        mixer.Sound.play(pop_sound)
                         active_player_move_time = PLAYER_MOVE_TIME
                         game.playerToggle()
                     elif surr_button.collidepoint((x,y)):
