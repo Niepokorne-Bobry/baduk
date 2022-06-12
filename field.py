@@ -106,6 +106,10 @@ class Field:
     def coordY(self, newCoordY: int):
         self.__coordY = newCoordY
 
+    def getCoords(self):
+        coords = (self.__coordX, self.__coordY)
+        return coords
+
     @property
     def name(self):
         return self.__name

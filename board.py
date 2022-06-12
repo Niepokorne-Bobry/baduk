@@ -40,5 +40,5 @@ class Board:
         return self.__fields
 
     # rysowanie kamienia o okreslonym kolorze (color) na wspolrzednych xi y
-    def drawStone(self, field, color, x, y):
-        pygame.draw.circle(field, color, [x, y], CIRCLE_RADIUS)
+    def drawStone(self, field, color, cords = []):
+        pygame.draw.circle(field, color, cords, CIRCLE_RADIUS)
