@@ -2,6 +2,7 @@ import pygame, sys
 from pygame import mixer
 import time
 import datetime
+from enums.field_types import FieldTypes
 from game_class import Game
 from constants import *
 
@@ -144,13 +145,24 @@ def game():
                             continue
                         active_player_move_time = PLAYER_MOVE_TIME
                         mixer.Sound.play(pop_sound)
-                        game.board.drawStone(screen, game.getActivePlayer().playerColor, correctXCoord, correctYCoord)
-                        pygame.display.flip()
                         game.getActivePlayer().createGroups()
                         game.clearFieldChecks()
                         game.getInactivePlayer().updateGroups()
                         game.playerToggle()
+                        draw_board(game, screen, bg_img)
+                        pygame.display.flip()
 
+
+def draw_board(game, surface, background):
+    surface.blit(background,(0,HUD_SIZE))
+    game.board.draw_lines(screen, HUD_SIZE, SIZE)
+
+    for row in game.board.fields:
+        for field in row:
+            if field.fieldType == FieldTypes.PLAYER_1_STONE:
+                game.board.drawStone(surface, BLACK, field.getCoords())
+            elif field.fieldType == FieldTypes.PLAYER_2_STONE:
+                game.board.drawStone(surface, WHITE, field.getCoords())
 
 def draw_score(game,surface):
     white_player_score_literal = f'Biały   {game.players[1].score}'
