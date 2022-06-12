@@ -43,7 +43,7 @@ click = False
 def main_menu():
     while True:
         screen.fill((0, 0, 0))
-        draw_text('main menu', font, (255, 255, 255), screen, 20, 20)
+        draw_text('main menu', font, WHITE, screen, 20, 20)
         mx, my = pygame.mouse.get_pos()
         button_1 = pygame.Rect(50, 100, 200, 50)
         button_2 = pygame.Rect(50, 200, 200, 50)
@@ -51,8 +51,8 @@ def main_menu():
             if click:
                 mixer.Sound.play(pop_sound)
                 game()
-        pygame.draw.rect(screen, (255, 0, 0), button_1)
-        pygame.draw.rect(screen, (255, 0, 0), button_2)
+        pygame.draw.rect(screen, RED, button_1)
+        pygame.draw.rect(screen, RED, button_2)
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -167,24 +167,24 @@ def draw_board(game, surface, background):
 def draw_score(game,surface):
     white_player_score_literal = f'Biały   {game.players[1].score}'
     black_player_score_literal = f'{game.players[0].score}   Czarny'
-    draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+    draw_text(GAME_TIME_STRING, font, WHITE, surface,
                 screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
-    draw_text(white_player_score_literal, font2, (255, 255, 255), surface, 0, 10)
-    draw_text(black_player_score_literal, font2, (255, 255, 255), surface,
+    draw_text(white_player_score_literal, font2, WHITE, surface, 0, 10)
+    draw_text(black_player_score_literal, font2, WHITE, surface,
                 screen.get_width() - pygame.font.Font.size(font2, black_player_score_literal)[0], 10)
 
 def draw_clock(surface, beginning_time):
     clock_string = str(datetime.timedelta(seconds=int(time.time()) - beginning_time))
-    return draw_text(clock_string, font2, (255, 255, 255), surface,
+    return draw_text(clock_string, font2, WHITE, surface,
                         screen.get_width() / 2 - pygame.font.Font.size(font2, clock_string)[0] / 2, 20)
 
 def draw_turn_pointer(game, surface, relative_item):
     if game.getActivePlayer().playerColor == PLAYER_TWO_COLOR:
-            poly = pygame.draw.polygon(surface, (255, 255, 255),
+            poly = pygame.draw.polygon(surface, WHITE,
                                        points=[(relative_item.left - 30, 30 - 15 / 2), (relative_item.left - 15, 15),
                                                (relative_item.left - 15, 30)])
     else:
-            poly = pygame.draw.polygon(surface, (255, 255, 255), 
+            poly = pygame.draw.polygon(surface, WHITE, 
                                         points=[(relative_item.right + 30, 30 - 15 / 2),
                                                 (relative_item.right + 15, 15),
                                                 (relative_item.right + 15, 30)])
@@ -218,7 +218,7 @@ def draw_buttons_section(surface, text_color, button_color, button_color_clicked
     draw_text(timer_string, font2, WHITE, surface, title_rect.left, title_rect.bottom)
 
 def draw_hud(game, surface, beginning_time):
-    game_time_rect = draw_text(GAME_TIME_STRING, font, (255, 255, 255), surface,
+    game_time_rect = draw_text(GAME_TIME_STRING, font, WHITE, surface,
                                screen.get_width() / 2 - pygame.font.Font.size(font, GAME_TIME_STRING)[0] / 2, 0)
     draw_score(game, surface)
     draw_clock(surface, beginning_time)
