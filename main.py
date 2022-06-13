@@ -90,7 +90,35 @@ def main_menu():
         pygame.display.update()
         mainClock.tick(FPS)
 
-
+def end_menu():
+    while True:
+        end_menu_img = pygame.image.load("koniec_menu.png.png")
+        end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
+        screen.blit(end_menu_img, (0, 0))
+        draw_text('', font, (255, 255, 255), screen, 20, 20)
+        button_1 = button(screen, (360, 100), "PLAY AGAIN", 30, "black on yellow")
+        button_2 = button(screen, (360, 100), "QUIT", 30, "black on yellow")
+        if button_1.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                mixer.Sound.play(pop_sound)
+                game()
+        if button_2.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                pygame.quit()
+        click = False
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        pygame.display.update()
+        mainClock.tick(FPS)
 def game():
     bg_img = pygame.image.load(os.path.join("assets/images","smoczek_tlo.png"))
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
