@@ -58,7 +58,6 @@ def main_menu():
     while True:
         menu_img = pygame.image.load("menu2_smoczek.png")
         menu_img = pygame.transform.scale(menu_img, (800, 600))
-        #wyjebanie hud size
         screen.blit(menu_img, (0, 0))
         draw_text('', font, (255, 255, 255), screen, 20, 20)
         mx, my = pygame.mouse.get_pos()
