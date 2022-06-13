@@ -51,10 +51,10 @@ def draw_text(text, font, color, surface, x, y):
     return textrect
 
 
-click = False
 
 # MENU
 def main_menu():
+    click = False
     while True:
         menu_img = pygame.image.load("menu2_smoczek.png")
         menu_img = pygame.transform.scale(menu_img, (800, 600))
@@ -91,6 +91,7 @@ def main_menu():
         mainClock.tick(FPS)
 
 def end_menu():
+    click = False
     while True:
         end_menu_img = pygame.image.load("koniec_menu.png.png")
         end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
