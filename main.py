@@ -13,7 +13,7 @@ from pygame.locals import *
 pygame.init()
 pygame.display.set_caption('Baduk')
 
-screen = pygame.display.set_mode((500, 500), 0, 32)
+screen = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
 
 icon = pygame.image.load(os.path.join("assets/images","emperor.png"))
 pygame.display.set_icon(icon)
@@ -28,6 +28,20 @@ pop_sound = mixer.Sound(os.path.join("assets/sounds","pop.mp3"))  # put stone so
 mixer.music.set_volume(0.05)
 mixer.music.play(-1)  # -1 czyli infinite loop
 
+#przycisk
+def button(screen, position, text, size, colors="white on blue"):
+    fg, bg = colors.split(" on ")
+    font = pygame.font.SysFont("Arial", size)
+    text_render = font.render(text, 1, fg)
+    x, y, w , h = text_render.get_rect()
+    x, y = position
+    pygame.draw.line(screen, (150, 150, 150), (x, y), (x + w , y), 5)
+    pygame.draw.line(screen, (150, 150, 150), (x, y - 2), (x, y + h), 5)
+    pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w , y + h), 5)
+    pygame.draw.line(screen, (50, 50, 50), (x + w , y+h), [x + w , y], 5)
+    pygame.draw.rect(screen, bg, (x, y, w , h))
+    print(screen.blit(text_render, (x, y)))
+    return screen.blit(text_render, (x, y))
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
@@ -39,21 +53,28 @@ def draw_text(text, font, color, surface, x, y):
 
 click = False
 
-
 # MENU
 def main_menu():
     while True:
-        screen.fill((0, 0, 0))
-        draw_text('main menu', font, WHITE, screen, 20, 20)
+        menu_img = pygame.image.load("menu2_smoczek.png")
+        menu_img = pygame.transform.scale(menu_img, (800, 600))
+        #wyjebanie hud size
+        screen.blit(menu_img, (0, 0))
+        draw_text('', font, (255, 255, 255), screen, 20, 20)
         mx, my = pygame.mouse.get_pos()
-        button_1 = pygame.Rect(50, 100, 200, 50)
-        button_2 = pygame.Rect(50, 200, 200, 50)
-        if button_1.collidepoint((mx, my)):
+        button_1=button(screen,(360,100),"PLAY",30,"black on yellow")
+        button_2=button(screen, (360, 200), "QUIT", 30, "black on yellow")
+        #button_1 = pygame.Rect(150, 150, 200, 50)
+        #button_2 = pygame.Rect(150, 250, 200, 50)
+        if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
                 game()
-        pygame.draw.rect(screen, RED, button_1)
-        pygame.draw.rect(screen, RED, button_2)
+        if button_2.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                pygame.quit()
+        #pygame.draw.rect(screen, (255, 0, 0), button_1)
+        #pygame.draw.rect(screen, (255, 0, 0), button_2)
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -69,7 +90,35 @@ def main_menu():
         pygame.display.update()
         mainClock.tick(FPS)
 
-
+def end_menu():
+    while True:
+        end_menu_img = pygame.image.load("koniec_menu.png.png")
+        end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
+        screen.blit(end_menu_img, (0, 0))
+        draw_text('', font, (255, 255, 255), screen, 20, 20)
+        button_1 = button(screen, (360, 100), "PLAY AGAIN", 30, "black on yellow")
+        button_2 = button(screen, (360, 100), "QUIT", 30, "black on yellow")
+        if button_1.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                mixer.Sound.play(pop_sound)
+                game()
+        if button_2.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                pygame.quit()
+        click = False
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        pygame.display.update()
+        mainClock.tick(FPS)
 def game():
     bg_img = pygame.image.load(os.path.join("assets/images","smoczek_tlo.png"))
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
