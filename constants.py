@@ -14,6 +14,9 @@ CLICKABLE_FIELD_SIZE = 10 # ilosc pixeli w kazdym kierunku od wspolrzednych punk
 
 HUD_SIZE = 50
 PLAYER_BUTTONS_SECTION_SIZE = 100
+#Menu size
+MENU_WIDTH=800
+MENU_HEIGHT=600
 
 BUTTON_SECTION_POS_Y = SIZE + HUD_SIZE
 
