@@ -53,22 +53,23 @@ def draw_text(text, font, color, surface, x, y):
 
 
 # MENU
-def main_menu():
+def main_menu(surface):
     click = False
     while True:
-        menu_img = pygame.image.load("menu2_smoczek.png")
+        menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         menu_img = pygame.transform.scale(menu_img, (800, 600))
-        screen.blit(menu_img, (0, 0))
-        draw_text('', font, (255, 255, 255), screen, 20, 20)
+        surface.blit(menu_img, (0, 0))
+        draw_text('', font, (255, 255, 255), surface, 20, 20)
         mx, my = pygame.mouse.get_pos()
-        button_1=button(screen,(360,100),"PLAY",30,"black on yellow")
-        button_2=button(screen, (360, 200), "QUIT", 30, "black on yellow")
+        button_1=button(surface,(360,100),"PLAY",30,"black on yellow")
+        button_2=button(surface, (360, 200), "QUIT", 30, "black on yellow")
         #button_1 = pygame.Rect(150, 150, 200, 50)
         #button_2 = pygame.Rect(150, 250, 200, 50)
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
                 game()
+                surface = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
         if button_2.collidepoint(pygame.mouse.get_pos()):
             if click:
                 pygame.quit()
@@ -282,4 +283,4 @@ def draw_hud(game, surface, beginning_time):
 
 
 
-main_menu()
+main_menu(screen)
