@@ -40,7 +40,6 @@ def button(screen, position, text, size, colors="white on blue"):
     pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w , y + h), 5)
     pygame.draw.line(screen, (50, 50, 50), (x + w , y+h), [x + w , y], 5)
     pygame.draw.rect(screen, bg, (x, y, w , h))
-    print(screen.blit(text_render, (x, y)))
     return screen.blit(text_render, (x, y))
 
 def draw_text(text, font, color, surface, x, y):

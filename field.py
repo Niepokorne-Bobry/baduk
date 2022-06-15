@@ -50,25 +50,21 @@ class Field:
         libs = 0
         try:
             if self.getLowerNeighbour().fieldType == FieldTypes.NONE:
-                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has lower neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getLeftNeighbour().fieldType == FieldTypes.NONE:
-                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has left neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getUpperNeighbour().fieldType == FieldTypes.NONE:
-                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has upper neighbour")
                 libs += 1
         except:
             pass
         try:
             if self.getRightNeighbour().fieldType == FieldTypes.NONE:
-                print("Field type:" + str(self.__fieldType) + " coords: " + str(self.boardX) + " " + str(self.boardY) + " has right neighbour")
                 libs += 1
         except:
             pass

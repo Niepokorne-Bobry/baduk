@@ -48,7 +48,6 @@ class Player:
         for group in self.groups:
             lostPoints = 0
             group.calculateGroupLiberties()
-            print("Group type: " + str(group.groupType) + " liberties: " + str(group.groupLiberties))
             if group.groupLiberties > 0:
                 newGroups.append(group)
             elif group.groupLiberties == 0:
