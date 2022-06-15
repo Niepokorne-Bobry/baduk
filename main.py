@@ -40,7 +40,6 @@ def button(screen, position, text, size, colors="white on blue"):
     pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w , y + h), 5)
     pygame.draw.line(screen, (50, 50, 50), (x + w , y+h), [x + w , y], 5)
     pygame.draw.rect(screen, bg, (x, y, w , h))
-    print(screen.blit(text_render, (x, y)))
     return screen.blit(text_render, (x, y))
 
 def draw_text(text, font, color, surface, x, y):
@@ -73,8 +72,7 @@ def main_menu(surface):
         if button_2.collidepoint(pygame.mouse.get_pos()):
             if click:
                 pygame.quit()
-        #pygame.draw.rect(screen, (255, 0, 0), button_1)
-        #pygame.draw.rect(screen, (255, 0, 0), button_2)
+                sys.exit()
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -90,10 +88,11 @@ def main_menu(surface):
         pygame.display.update()
         mainClock.tick(FPS)
 
+
 def end_menu():
     click = False
     while True:
-        end_menu_img = pygame.image.load("koniec_menu.png.png")
+        end_menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
         screen.blit(end_menu_img, (0, 0))
         draw_text('', font, (255, 255, 255), screen, 20, 20)
@@ -102,10 +101,12 @@ def end_menu():
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
-                game()
+                print("CHUj")
+                return myQUIT
         if button_2.collidepoint(pygame.mouse.get_pos()):
             if click:
-                pygame.quit()
+                print("SIEMA")
+                return myPLAY_AGAIN
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -119,7 +120,7 @@ def end_menu():
                 if event.button == 1:
                     click = True
         pygame.display.update()
-        mainClock.tick(FPS)
+
 def game():
     bg_img = pygame.image.load(os.path.join("assets/images","smoczek_tlo.png"))
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
@@ -158,6 +159,12 @@ def game():
             draw_buttons_section(buttons_section_surface, WHITE, RED, RED, active_player_move_time, pygame.mouse.get_pos())
             draw_hud(game, hud_surface, start)
             pygame.display.flip()
+        
+        if game.gameEnd == True:
+            print("end meni odpalone")
+            ret = end_menu()
+            if ret == 0:
+                running = False
 
         if game.gameEnd is False: 
             hud_surface.fill(BLACK)
