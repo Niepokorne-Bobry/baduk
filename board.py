@@ -1,5 +1,5 @@
 from field import Field
-from constants import HUD_SIZE, line_color, LINE_WIDTH, LINE_LENGTH, CIRCLE_WIDTH, CIRCLE_RADIUS
+from constants import HUD_SIZE, line_color, LINE_WIDTH, LINE_LENGTH, FIELD_OFFSET, CIRCLE_RADIUS
 import pygame
 
 
@@ -15,7 +15,7 @@ class Board:
             for j in range(self.__size):
                 name = 'object' + str(zmienna)
                 tempRow.append(
-                    Field(name, LINE_LENGTH + (j * LINE_LENGTH), LINE_LENGTH + (i * LINE_LENGTH) + HUD_SIZE, j, i, self))
+                    Field(name, LINE_LENGTH + (j * LINE_LENGTH) + FIELD_OFFSET, LINE_LENGTH + (i * LINE_LENGTH) + HUD_SIZE + FIELD_OFFSET, j, i, self))
                 zmienna += 1
             self.__fields.append(tempRow)
             tempRow = []
@@ -27,9 +27,9 @@ class Board:
         for i in range(self.__size):
             x = i * LINE_LENGTH
             # poziome linie
-            pygame.draw.line(screen, line_color, [0, LINE_LENGTH + x + HUD_SIZE], [SIZE, LINE_LENGTH + x + HUD_SIZE], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [0, LINE_LENGTH + x + HUD_SIZE + FIELD_OFFSET], [SIZE, LINE_LENGTH + x + HUD_SIZE + FIELD_OFFSET], LINE_WIDTH)
             # pionowe linie
-            pygame.draw.line(screen, line_color, [LINE_LENGTH + x, HUD_SIZE], [LINE_LENGTH + x, SIZE+HUD_SIZE], LINE_WIDTH)
+            pygame.draw.line(screen, line_color, [LINE_LENGTH + x + FIELD_OFFSET, HUD_SIZE], [LINE_LENGTH + x + FIELD_OFFSET, SIZE+HUD_SIZE], LINE_WIDTH)
 
     @property
     def size(self):
