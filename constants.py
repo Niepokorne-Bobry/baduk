@@ -37,3 +37,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 RED_HOVERED = (144, 32, 32)
+
+#return vals
+myQUIT = 0
+myPLAY_AGAIN = 1
+

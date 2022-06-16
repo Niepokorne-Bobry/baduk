@@ -39,9 +39,11 @@ def button(screen, position, text, size, colors="white on blue"):
     x, y = position
     pygame.draw.line(screen, (150, 150, 150), (x, y), (x + w, y), 5)
     pygame.draw.line(screen, (150, 150, 150), (x, y - 2), (x, y + h), 5)
+
     pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w, y + h), 5)
     pygame.draw.line(screen, (50, 50, 50), (x + w, y + h), [x + w, y], 5)
     pygame.draw.rect(screen, bg, (x, y, w, h))
+    
     return screen.blit(text_render, (x, y))
 
 
@@ -53,14 +55,15 @@ def draw_text(text, font, color, surface, x, y):
     return textrect
 
 
-click = False
 
 
 # MENU
-def main_menu():
+def main_menu(surface):
+    click = False
     while True:
-        menu_img = pygame.image.load("menu2_smoczek.png")
+        menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         menu_img = pygame.transform.scale(menu_img, (800, 600))
+
         # wyjebanie hud size
         screen.blit(menu_img, (0, 0))
         draw_text('', font, (255, 255, 255), screen, 20, 20)
@@ -69,15 +72,16 @@ def main_menu():
         button_2 = button(screen, (360, 200), "QUIT", 30, "black on yellow")
         # button_1 = pygame.Rect(150, 150, 200, 50)
         # button_2 = pygame.Rect(150, 250, 200, 50)
+
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
                 game()
+                surface = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
         if button_2.collidepoint(pygame.mouse.get_pos()):
             if click:
                 pygame.quit()
-        # pygame.draw.rect(screen, (255, 0, 0), button_1)
-        # pygame.draw.rect(screen, (255, 0, 0), button_2)
+                sys.exit()
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -94,21 +98,26 @@ def main_menu():
         mainClock.tick(FPS)
 
 
-def end_menu():
+
+def end_menu(game):
+    click = False
+    surface = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
     while True:
-        end_menu_img = pygame.image.load("koniec_menu.png.png")
+        end_menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
         screen.blit(end_menu_img, (0, 0))
-        draw_text('', font, (255, 255, 255), screen, 20, 20)
-        button_1 = button(screen, (360, 100), "PLAY AGAIN", 30, "black on yellow")
-        button_2 = button(screen, (360, 100), "QUIT", 30, "black on yellow")
+        draw_text('', font, WHITE, screen, 20, 20)
+        score_string = f"White {game.players[1].score} - {game.players[0].score} Black"
+        ret_btn_txt = "Return to main menu"
+        draw_text(score_string,font2,WHITE,screen,screen.get_width()/2
+                                -pygame.font.Font.size(font2,score_string)[0]/2,
+                                100)
+        button_1 = button(screen, (screen.get_width()/2
+                                -pygame.font.Font.size(font,"Return to main menu")[0]+20, 200), ret_btn_txt, 30, "black on yellow")
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
-                game()
-        if button_2.collidepoint(pygame.mouse.get_pos()):
-            if click:
-                pygame.quit()
+                return myQUIT
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -122,7 +131,6 @@ def end_menu():
                 if event.button == 1:
                     click = True
         pygame.display.update()
-        mainClock.tick(FPS)
 
 
 def game():
@@ -166,6 +174,11 @@ def game():
                                  pygame.mouse.get_pos())
             draw_hud(game, hud_surface, start)
             pygame.display.flip()
+        
+        if game.gameEnd == True:
+            ret = end_menu(game)
+            if ret == 0:
+                running = False
 
         if game.gameEnd is False:
             hud_surface.fill(BLACK)
@@ -306,4 +319,6 @@ def draw_hud(game, surface, beginning_time):
     draw_turn_pointer(game, surface, game_time_rect)
 
 
-main_menu()
+
+main_menu(screen)
+
