@@ -89,24 +89,25 @@ def main_menu(surface):
         mainClock.tick(FPS)
 
 
-def end_menu():
+def end_menu(game):
     click = False
+    surface = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
     while True:
         end_menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         end_menu_img = pygame.transform.scale(end_menu_img, (800, 600))
         screen.blit(end_menu_img, (0, 0))
-        draw_text('', font, (255, 255, 255), screen, 20, 20)
-        button_1 = button(screen, (360, 100), "PLAY AGAIN", 30, "black on yellow")
-        button_2 = button(screen, (360, 100), "QUIT", 30, "black on yellow")
+        draw_text('', font, WHITE, screen, 20, 20)
+        score_string = f"White {game.players[1].score} - {game.players[0].score} Black"
+        ret_btn_txt = "Return to main menu"
+        draw_text(score_string,font2,WHITE,screen,screen.get_width()/2
+                                -pygame.font.Font.size(font2,score_string)[0]/2,
+                                100)
+        button_1 = button(screen, (screen.get_width()/2
+                                -pygame.font.Font.size(font,"Return to main menu")[0]+20, 200), ret_btn_txt, 30, "black on yellow")
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
-                print("CHUj")
                 return myQUIT
-        if button_2.collidepoint(pygame.mouse.get_pos()):
-            if click:
-                print("SIEMA")
-                return myPLAY_AGAIN
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -161,8 +162,7 @@ def game():
             pygame.display.flip()
         
         if game.gameEnd == True:
-            print("end meni odpalone")
-            ret = end_menu()
+            ret = end_menu(game)
             if ret == 0:
                 running = False
 
