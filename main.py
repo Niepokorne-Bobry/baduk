@@ -18,6 +18,7 @@ screen = pygame.display.set_mode((MENU_WIDTH, MENU_HEIGHT), 0, 32)
 icon = pygame.image.load(os.path.join("assets/images", "emperor.png"))
 pygame.display.set_icon(icon)
 
+
 font = pygame.font.SysFont(None, 20)
 font2 = pygame.font.SysFont(None, 40)
 
@@ -60,6 +61,11 @@ def draw_text(text, font, color, surface, x, y):
 # MENU
 def main_menu(surface):
     click = False
+    isMuted = False
+    inputActive = False
+    text = ""
+    textRect = None
+    playerMoveTime = -1
     while True:
         menu_img = pygame.image.load(os.path.join("assets/images","menu2_smoczek.png"))
         menu_img = pygame.transform.scale(menu_img, (800, 600))
@@ -70,30 +76,61 @@ def main_menu(surface):
         mx, my = pygame.mouse.get_pos()
         button_1 = button(screen, (360, 100), "PLAY", 30, "black on yellow")
         button_2 = button(screen, (360, 200), "QUIT", 30, "black on yellow")
+        button_3 = button(screen, (349,300),"SOUND",30,"black on yellow");
+        draw_text("Write player move time (in seconds)",font,WHITE,screen,290,380)
+        input_box = pygame.Rect(349,400, 100, 30)
+        pygame.draw.rect(screen,"yellow",input_box)
+
         # button_1 = pygame.Rect(150, 150, 200, 50)
         # button_2 = pygame.Rect(150, 250, 200, 50)
 
         if button_1.collidepoint(pygame.mouse.get_pos()):
             if click:
                 mixer.Sound.play(pop_sound)
-                game()
+                game(playerMoveTime)
                 surface = pygame.display.set_mode((MENU_WIDTH,MENU_HEIGHT), 0, 32)
         if button_2.collidepoint(pygame.mouse.get_pos()):
             if click:
                 pygame.quit()
                 sys.exit()
+        if button_3.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                if isMuted is False:
+                    mixer.music.set_volume(0)
+                    isMuted = True
+                else:
+                    mixer.music.set_volume(0.05)
+                    isMuted = False
+        if input_box.collidepoint(pygame.mouse.get_pos()):
+            if click:
+                isActive = True
+                print(isActive)
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
+                if isActive:
+                    if event.key == K_RETURN:
+                        active = False
+                        try:
+                            playerMoveTime = int(text)
+                            print(playerMoveTime)
+                        except:
+                            text = ""
+                            pass
+                    elif event.key == K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
+        textRect = draw_text(text, font, BLACK, screen, 349, 400)
         pygame.display.update()
         mainClock.tick(FPS)
 
@@ -133,9 +170,11 @@ def end_menu(game):
         pygame.display.update()
 
 
-def game():
+def game(playerMoveTime):
     bg_img = pygame.image.load(os.path.join("assets/images", "smoczek_tlo.png"))
     bg_img = pygame.transform.scale(bg_img, (SIZE, SIZE))
+
+    playerTime = 15
 
     # inicjalizacja pygame i glownego surface
     pygame.init()
@@ -156,7 +195,10 @@ def game():
     # inicjalizacja timera
     start = int(time.time())
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # sekundnik
-    active_player_move_time = PLAYER_MOVE_TIME
+    if playerMoveTime == -1:
+        playerTime = PLAYER_MOVE_TIME
+    else:
+        playerTime = playerMoveTime
 
     pass_button = pygame.Rect(SIZE / 2 - SIZE / 4, BUTTON_SECTION_POS_Y + PLAYER_BUTTONS_SECTION_SIZE * 0.25, SIZE / 4,
                               SIZE / 2)
@@ -170,7 +212,7 @@ def game():
             game.gameScoreCalculation()
             hud_surface.fill(BLACK)
             buttons_section_surface.fill(BLACK)
-            draw_buttons_section(buttons_section_surface, WHITE, RED, RED, active_player_move_time,
+            draw_buttons_section(buttons_section_surface, WHITE, RED, RED, playerTime,
                                  pygame.mouse.get_pos())
             draw_hud(game, hud_surface, start)
             pygame.display.flip()
@@ -185,7 +227,7 @@ def game():
             buttons_section_surface.fill(BLACK)
             # rysowanie gornego i dolnego paska informacji, przyciskow itp.
             draw_hud(game, hud_surface, start)
-            draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time,
+            draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, playerTime,
                                  pygame.mouse.get_pos())
 
             # odswiezanie paskow (x, y), (width, height)
@@ -197,12 +239,16 @@ def game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.USEREVENT:
-                active_player_move_time -= 1
-                if active_player_move_time <= 0 and game.gameEnd is False:
+                playerTime -= 1
+                if playerTime <= 0 and game.gameEnd is False:
                     game.getActivePlayer().isPassing = True
                     game.playerToggle()
                     mixer.Sound.play(pop_sound)
-                    active_player_move_time = PLAYER_MOVE_TIME
+                    if playerMoveTime == -1:
+                        playerTime = PLAYER_MOVE_TIME
+                    else:
+                        playerTime = playerMoveTime
+
             if event.type == pygame.MOUSEBUTTONDOWN and game.gameEnd is False:
                 x, y = pygame.mouse.get_pos()
                 if event.button == 1:
@@ -210,21 +256,21 @@ def game():
                     if pass_button.collidepoint((x, y)):
                         game.getActivePlayer().isPassing = True
                         mixer.Sound.play(pop_sound)
-                        active_player_move_time = PLAYER_MOVE_TIME
+                        active_player_move_time = playerTime
                         game.playerToggle()
                     elif surr_button.collidepoint((x, y)):
                         game.gameEnd = True
                         game.gameScoreCalculation()
                         hud_surface.fill(BLACK)
                         draw_hud(game, hud_surface, start)
-                        draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, active_player_move_time,
+                        draw_buttons_section(buttons_section_surface, WHITE, RED, RED_HOVERED, playerTime,
                                              pygame.mouse.get_pos())
                         pygame.display.flip()
                     else:
                         correctXCoord, correctYCoord, boardX, boardY = game.getActivePlayer().makeMove(x, y)
                         if correctXCoord == -1 and correctYCoord == -1 and boardX == -1 and boardY == -1:
                             continue
-                        active_player_move_time = PLAYER_MOVE_TIME
+                        playerTime = playerMoveTime
                         mixer.Sound.play(pop_sound)
                         game.getActivePlayer().createGroups()
                         game.clearFieldChecks()
